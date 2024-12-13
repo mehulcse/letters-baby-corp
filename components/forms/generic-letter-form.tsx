@@ -23,7 +23,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface FieldProps {
   field: {
-    onChange: (value: any) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     value: string;
     name: string;
     onBlur: () => void;

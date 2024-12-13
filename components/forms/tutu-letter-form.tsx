@@ -33,7 +33,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface FieldProps {
   field: {
-    onChange: (value: any) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement> | string) => void;
     value: string;
     name: string;
     onBlur: () => void;
@@ -63,7 +63,7 @@ export function TUTULetterForm(): ReactNode {
             render={({ field }: FieldProps) => (
               <FormItem>
                 <FormLabel>Select Language</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange as (value: string) => void} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a language" />
