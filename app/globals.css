@@ -204,4 +204,20 @@ body {
     box-shadow: none !important;
     border-color: black !important;
   }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-content,
+  .print-content * {
+    visibility: visible;
+  }
+
+  .print-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }
