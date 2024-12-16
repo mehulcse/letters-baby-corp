@@ -77,7 +77,7 @@ body {
     size: A4 portrait;
     margin: 0;
   }
-  
+
   body {
     margin: 0;
     padding: 0;
@@ -85,7 +85,7 @@ body {
     print-color-adjust: exact;
     background: white !important;
   }
-  
+
   .print-page {
     page-break-after: always;
     page-break-inside: avoid;
@@ -101,13 +101,13 @@ body {
   /* Hide dialog elements when printing */
   .dialog-header,
   .dialog-footer,
-  [role="dialog"] > div:last-child,
+  [role='dialog'] > div:last-child,
   button {
     display: none !important;
   }
 
   /* Remove background and border when printing */
-  [role="dialog"] {
+  [role='dialog'] {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -122,7 +122,7 @@ body {
   }
 
   /* Ensure letter content is visible */
-  [role="dialog"] > div {
+  [role='dialog'] > div {
     transform: none !important;
     max-height: none !important;
   }
@@ -140,5 +140,68 @@ body {
       page-break-after: always;
       position: relative;
     }
+  }
+
+  /* Fix background printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background-color: transparent !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
+
+  /* Remove any background colors when printing */
+  [role='dialog'],
+  .dialog-content,
+  .print-page,
+  .print-page-landscape {
+    background: white !important;
+    background-color: white !important;
+  }
+
+  /* Hide dialog overlay */
+  .fixed.inset-0,
+  [role='dialog']::before,
+  [role='dialog']::after {
+    display: none !important;
+    background: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .print-page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    width: 210mm;
+    height: 297mm;
+    position: relative;
+    background: white !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+  }
+
+  .print-page-landscape {
+    page-break-after: always;
+    page-break-inside: avoid;
+    width: 297mm;
+    height: 210mm;
+    position: relative;
+    background: white !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+  }
+
+  /* Remove shadows and borders when printing */
+  .shadow-sm,
+  .border,
+  .border-t,
+  .border-b {
+    box-shadow: none !important;
+    border-color: black !important;
   }
 }

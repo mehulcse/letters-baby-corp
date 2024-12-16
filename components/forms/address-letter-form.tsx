@@ -1,70 +1,72 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { LetterPreview } from "@/components/letter-preview";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { LetterPreview } from '@/components/letter-preview';
 
 const INDIAN_STATES = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
+  'Andaman and Nicobar Islands',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chandigarh',
+  'Chhattisgarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jammu and Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Ladakh',
+  'Lakshadweep',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Puducherry',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
 ] as const;
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  houseNumber: z.string().min(1, "House number is required"),
-  addressLine1: z.string().min(1, "Address line 1 is required"),
+  name: z.string().min(1, 'Name is required'),
+  houseNumber: z.string().min(1, 'House number is required'),
+  addressLine1: z.string().min(1, 'Address line 1 is required'),
   addressLine2: z.string().optional(),
-  city: z.string().min(1, "City is required"),
+  city: z.string().min(1, 'City is required'),
   state: z.enum(INDIAN_STATES, {
-    required_error: "Please select a state",
+    required_error: 'Please select a state',
   }),
-  zipCode: z.string().min(6, "ZIP code must be 6 digits").max(6),
-  phone: z.string().min(10, "Phone number must be 10 digits").max(10),
-  trackingId: z.string().min(1, "Tracking ID is required"),
+  zipCode: z.string().min(6, 'ZIP code must be 6 digits').max(6),
+  phone: z.string().min(10, 'Phone number must be 10 digits').max(10),
+  trackingId: z.string().min(1, 'Tracking ID is required'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -73,6 +75,15 @@ interface FieldProps {
   field: {
     onChange: (event: React.ChangeEvent<HTMLInputElement> | string) => void;
     value: string;
+    name: string;
+    onBlur: () => void;
+  };
+}
+
+interface OptionalFieldProps {
+  field: {
+    onChange: (event: React.ChangeEvent<HTMLInputElement> | string) => void;
+    value: string | undefined;
     name: string;
     onBlur: () => void;
   };
@@ -94,7 +105,7 @@ export function AddressLetterForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      addressLine2: "",
+      addressLine2: '',
     },
   });
 
@@ -149,13 +160,13 @@ export function AddressLetterForm() {
           <FormField
             control={form.control}
             name="addressLine2"
-            render={({ field }: FieldProps) => (
+            render={({ field }: OptionalFieldProps) => (
               <FormItem>
                 <FormLabel>Address Line 2 (Optional)</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value || ''}
                     placeholder="Enter area, landmark, etc."
                   />
                 </FormControl>
@@ -182,10 +193,7 @@ export function AddressLetterForm() {
             render={({ field }: SelectFieldProps) => (
               <FormItem>
                 <FormLabel>State</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select state" />
@@ -210,11 +218,7 @@ export function AddressLetterForm() {
               <FormItem>
                 <FormLabel>ZIP Code</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Enter 6-digit PIN code"
-                    maxLength={6}
-                  />
+                  <Input {...field} placeholder="Enter 6-digit PIN code" maxLength={6} />
                 </FormControl>
               </FormItem>
             )}
@@ -227,11 +231,7 @@ export function AddressLetterForm() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Enter 10-digit phone number"
-                    maxLength={10}
-                  />
+                  <Input {...field} placeholder="Enter 10-digit phone number" maxLength={10} />
                 </FormControl>
               </FormItem>
             )}
