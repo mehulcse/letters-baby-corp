@@ -12,13 +12,58 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { LetterPreview } from "@/components/letter-preview";
 
+const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+] as const;
+
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  address: z.string().min(1, "Address is required"),
-  phone: z.string().min(1, "Phone number is required"),
+  houseNumber: z.string().min(1, "House number is required"),
+  addressLine1: z.string().min(1, "Address line 1 is required"),
+  addressLine2: z.string().optional(),
+  city: z.string().min(1, "City is required"),
+  state: z.enum(INDIAN_STATES, {
+    required_error: "Please select a state",
+  }),
+  zipCode: z.string().min(6, "ZIP code must be 6 digits").max(6),
+  phone: z.string().min(10, "Phone number must be 10 digits").max(10),
   trackingId: z.string().min(1, "Tracking ID is required"),
 });
 
@@ -26,7 +71,16 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface FieldProps {
   field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement> | string) => void;
+    value: string;
+    name: string;
+    onBlur: () => void;
+  };
+}
+
+interface SelectFieldProps {
+  field: {
+    onChange: (value: string) => void;
     value: string;
     name: string;
     onBlur: () => void;
@@ -36,9 +90,12 @@ interface FieldProps {
 export function AddressLetterForm() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<FormValues | null>(null);
-  
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      addressLine2: "",
+    },
   });
 
   async function onSubmit(data: FormValues) {
@@ -65,12 +122,99 @@ export function AddressLetterForm() {
 
           <FormField
             control={form.control}
-            name="address"
+            name="houseNumber"
             render={({ field }: FieldProps) => (
               <FormItem>
-                <FormLabel>Address</FormLabel>
+                <FormLabel>House/Flat Number</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter address" />
+                  <Input {...field} placeholder="Enter house/flat number" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="addressLine1"
+            render={({ field }: FieldProps) => (
+              <FormItem>
+                <FormLabel>Address Line 1</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter street address" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="addressLine2"
+            render={({ field }: FieldProps) => (
+              <FormItem>
+                <FormLabel>Address Line 2 (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value || ""}
+                    placeholder="Enter area, landmark, etc."
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }: FieldProps) => (
+              <FormItem>
+                <FormLabel>City</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter city" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }: SelectFieldProps) => (
+              <FormItem>
+                <FormLabel>State</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {INDIAN_STATES.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="zipCode"
+            render={({ field }: FieldProps) => (
+              <FormItem>
+                <FormLabel>ZIP Code</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Enter 6-digit PIN code"
+                    maxLength={6}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -83,7 +227,11 @@ export function AddressLetterForm() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter phone number" />
+                  <Input
+                    {...field}
+                    placeholder="Enter 10-digit phone number"
+                    maxLength={10}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -118,4 +266,4 @@ export function AddressLetterForm() {
       )}
     </>
   );
-} 
+}
