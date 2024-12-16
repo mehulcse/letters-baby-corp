@@ -14,9 +14,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { LetterPreview } from '@/components/letter-preview';
+import { AddressLetterPreview } from '@/components/address-letter-preview';
 
-const INDIAN_STATES = [
+export const INDIAN_STATES = [
   'Andaman and Nicobar Islands',
   'Andhra Pradesh',
   'Arunachal Pradesh',
@@ -54,6 +54,20 @@ const INDIAN_STATES = [
   'Uttarakhand',
   'West Bengal',
 ] as const;
+
+export type IndianState = (typeof INDIAN_STATES)[number];
+
+export interface AddressFormValues {
+  name: string;
+  houseNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: IndianState;
+  zipCode: string;
+  phone: string;
+  trackingId: string;
+}
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -100,62 +114,108 @@ interface SelectFieldProps {
 
 export function AddressLetterForm() {
   const [showPreview, setShowPreview] = useState(false);
-  const [formData, setFormData] = useState<FormValues | null>(null);
+  const [addresses, setAddresses] = useState<FormValues[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
+      houseNumber: '',
+      addressLine1: '',
       addressLine2: '',
+      city: '',
+      state: INDIAN_STATES[0],
+      zipCode: '',
+      phone: '',
+      trackingId: '',
     },
   });
 
   async function onSubmit(data: FormValues) {
-    setFormData(data);
-    setShowPreview(true);
+    setAddresses((prev) => [...prev, data]);
+    form.reset({
+      name: '',
+      houseNumber: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: INDIAN_STATES[0],
+      zipCode: '',
+      phone: '',
+      trackingId: '',
+    });
   }
+
+  const handlePreview = () => {
+    if (addresses.length > 0) {
+      setShowPreview(true);
+    }
+  };
+
+  const handleClearAll = () => {
+    setAddresses([]);
+    form.reset();
+  };
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter name" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter name" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="houseNumber"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>House/Flat Number</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter house/flat number" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="trackingId"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>Tracking ID</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter tracking ID" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="addressLine1"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>Address Line 1</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter street address" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="houseNumber"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>House/Flat Number</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter house/flat number" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="addressLine1"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>Address Line 1</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter street address" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -174,55 +234,57 @@ export function AddressLetterForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="city"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>City</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter city" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="state"
-            render={({ field }: SelectFieldProps) => (
-              <FormItem>
-                <FormLabel>State</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <div className="grid grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
+                    <Input {...field} placeholder="Enter city" />
                   </FormControl>
-                  <SelectContent>
-                    {INDIAN_STATES.map((state) => (
-                      <SelectItem key={state} value={state}>
-                        {state}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="zipCode"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>ZIP Code</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter 6-digit PIN code" maxLength={6} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }: SelectFieldProps) => (
+                <FormItem>
+                  <FormLabel>State</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {INDIAN_STATES.map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="zipCode"
+              render={({ field }: FieldProps) => (
+                <FormItem>
+                  <FormLabel>ZIP Code</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter 6-digit PIN code" maxLength={6} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -237,31 +299,35 @@ export function AddressLetterForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="trackingId"
-            render={({ field }: FieldProps) => (
-              <FormItem>
-                <FormLabel>Tracking ID</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter tracking ID" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <div className="flex gap-4">
-            <Button type="submit">Generate Letter</Button>
+          <div className="flex justify-between gap-4">
+            <div className="flex gap-2">
+              <Button type="submit">Add Address</Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClearAll}
+                disabled={addresses.length === 0}
+              >
+                Clear All
+              </Button>
+            </div>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-gray-500">
+                {addresses.length} {addresses.length === 1 ? 'address' : 'addresses'} added
+              </p>
+              <Button type="button" onClick={handlePreview} disabled={addresses.length === 0}>
+                Preview All
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
 
-      {formData && (
-        <LetterPreview
+      {showPreview && (
+        <AddressLetterPreview
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
-          letterType="ADDRESS"
-          data={formData}
+          data={addresses}
         />
       )}
     </>

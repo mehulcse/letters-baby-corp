@@ -72,136 +72,56 @@ body {
 }
 
 @media print {
-  /* Default print styles for all letters */
-  @page {
-    size: A4 portrait;
-    margin: 0;
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    background: white !important;
-  }
-
-  .print-page {
-    page-break-after: always;
-    page-break-inside: avoid;
-    width: 210mm;
-    height: 297mm;
-    position: relative;
-  }
-
-  .print-page:last-child {
-    page-break-after: auto;
-  }
-
-  /* Hide dialog elements when printing */
-  .dialog-header,
-  .dialog-footer,
-  [role='dialog'] > div:last-child,
-  button {
+  /* Hide everything by default */
+  body > * {
     display: none !important;
   }
 
-  /* Remove background and border when printing */
-  [role='dialog'] {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-height: none !important;
-    overflow: visible !important;
-    transform: none !important;
-  }
-
-  /* Ensure letter content is visible */
-  [role='dialog'] > div {
-    transform: none !important;
-    max-height: none !important;
-  }
-
-  /* Specific styles for address letter */
+  /* Only show the address preview */
   .address-letter-preview {
-    @page {
-      size: A4 landscape;
-    }
-
-    .print-page-landscape {
-      width: 297mm;
-      height: 210mm;
-      page-break-inside: avoid;
-      page-break-after: always;
-      position: relative;
-    }
-  }
-
-  /* Fix background printing */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-    background-color: transparent !important;
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    background: white !important;
-  }
-
-  /* Remove any background colors when printing */
-  [role='dialog'],
-  .dialog-content,
-  .print-page,
-  .print-page-landscape {
-    background: white !important;
-    background-color: white !important;
-  }
-
-  /* Hide dialog overlay */
-  .fixed.inset-0,
-  [role='dialog']::before,
-  [role='dialog']::after {
-    display: none !important;
-    background: none !important;
-  }
-
-  /* Ensure proper page breaks */
-  .print-page {
-    page-break-after: always;
-    page-break-inside: avoid;
-    width: 210mm;
-    height: 297mm;
-    position: relative;
-    background: white !important;
-    margin: 0 !important;
-    padding: 20mm !important;
-  }
-
-  .print-page-landscape {
-    page-break-after: always;
-    page-break-inside: avoid;
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 297mm;
     height: 210mm;
-    position: relative;
-    background: white !important;
-    margin: 0 !important;
-    padding: 20mm !important;
+
+    @page {
+      size: 297mm 210mm landscape;
+      margin: 0;
+    }
   }
 
-  /* Remove shadows and borders when printing */
-  .shadow-sm,
-  .border,
-  .border-t,
-  .border-b {
-    box-shadow: none !important;
-    border-color: black !important;
+  /* Hide all UI elements */
+  .dialog-header,
+  .dialog-footer,
+  button,
+  .fixed.inset-0,
+  h1,
+  footer {
+    display: none !important;
+  }
+
+  /* Show only the content we want to print */
+  .print-page-landscape {
+    display: block !important;
+    width: 297mm;
+    height: 210mm;
+    page-break-inside: avoid;
+    page-break-after: always;
+    position: relative;
+    transform: none !important;
+  }
+
+  [role='dialog'] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
   }
 }
